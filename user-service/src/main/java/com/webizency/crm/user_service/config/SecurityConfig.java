@@ -44,22 +44,39 @@ public class SecurityConfig {
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() {
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
 
-        JwtGrantedAuthoritiesConverter converter =
+        JwtGrantedAuthoritiesConverter defaultConverter =
                 new JwtGrantedAuthoritiesConverter();
 
-        converter.setAuthoritiesClaimName(
-                "realm_access.roles");
-
-        converter.setAuthorityPrefix("ROLE_");
-
-        JwtAuthenticationConverter jwtConverter =
+        JwtAuthenticationConverter converter =
                 new JwtAuthenticationConverter();
 
-        jwtConverter.setJwtGrantedAuthoritiesConverter(
-                converter);
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
 
-        return jwtConverter;
+            var authorities = new java.util.ArrayList<>(
+                    defaultConverter.convert(jwt)
+            );
+
+            var realmAccess = jwt.getClaimAsMap("realm_access");
+
+            if (realmAccess != null) {
+
+                Object rolesObject = realmAccess.get("roles");
+
+                if (rolesObject instanceof java.util.Collection<?> roles) {
+
+                    roles.stream()
+                            .map(Object::toString)
+                            .map(role -> "ROLE_" + role)
+                            .map(org.springframework.security.core.authority.SimpleGrantedAuthority::new)
+                            .forEach(authorities::add);
+                }
+            }
+
+            return authorities;
+        });
+
+        return converter;
     }
 }

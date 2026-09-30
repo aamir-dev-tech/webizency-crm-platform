@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByEmailIgnoreCase(
             String email);
 
+    boolean existsByKeycloakUserId(String keycloakUserId);
+
 }

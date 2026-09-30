@@ -4,6 +4,7 @@ import com.webizency.crm.user_service.dto.CreateUserRequest;
 import com.webizency.crm.user_service.dto.UserResponse;
 import com.webizency.crm.user_service.entity.User;
 import com.webizency.crm.user_service.entity.UserStatus;
+import com.webizency.crm.user_service.exception.DuplicateResourceException;
 import com.webizency.crm.user_service.mapper.UserMapper;
 import com.webizency.crm.user_service.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,16 @@ public class UserService {
             CreateUserRequest request,
             String currentUserId) {
 
-        if (userRepository
-                .existsByEmailIgnoreCase(request.email())) {
+        if (userRepository.existsByKeycloakUserId(request.keycloakUserId())) {
+            throw new DuplicateResourceException(
+                    "A CRM user already exists for this Keycloak user"
+            );
+        }
 
-            throw new IllegalArgumentException(
-                    "User with email already exists");
+        if (userRepository.existsByEmailIgnoreCase(request.email())) {
+            throw new DuplicateResourceException(
+                    "A user already exists with email: " + request.email()
+            );
         }
 
         Instant now = Instant.now();

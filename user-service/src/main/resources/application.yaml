@@ -3,14 +3,14 @@ spring:
     name: user-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/crm_user_db
+    url: jdbc:mysql://localhost:3307/crm_user_db
     username: crm
     password: crm_password
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
@@ -24,7 +24,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/crm
+          issuer-uri: http://localhost:8090/realms/crm
 
 server:
   port: 8081

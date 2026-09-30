@@ -1,0 +1,29 @@
+services:
+
+  mysql-user:
+    image: mysql:8.4
+    container_name: crm-mysql-user
+    environment:
+      MYSQL_DATABASE: crm_user_db
+      MYSQL_USER: crm
+      MYSQL_PASSWORD: crm_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-user-data:/var/lib/mysql
+
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    container_name: crm-keycloak
+    command:
+      - start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8090:8080"
+
+volumes:
+
+  mysql-user-data:
