@@ -13,6 +13,20 @@ services:
     volumes:
       - mysql-user-data:/var/lib/mysql
 
+  mysql-contact:
+    image: mysql:8.4
+    container_name: crm-mysql-contact
+    environment:
+      MYSQL_DATABASE: crm_contact_db
+      MYSQL_USER: crm
+      MYSQL_PASSWORD: crm_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-contact-data:/var/lib/mysql
+
+
   keycloak:
     image: quay.io/keycloak/keycloak
     container_name: crm-keycloak
@@ -27,3 +41,4 @@ services:
 volumes:
 
   mysql-user-data:
+  mysql-contact-data:
